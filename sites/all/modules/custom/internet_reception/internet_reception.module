@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Build page and form for internet_reception.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function internet_reception_menu() {
+  $items = array();
+  $items['itnernet_reception-page'] = array(
+    'title' => 'Internet Reception',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('itnernet_reception_page_form'),
+    'access callback' => TRUE,
+  );
+
+  return $items;
+}
+
+/**
+ * Build internet_reception form.
+ */
+function itnernet_reception_page_form($form, $form_state) {
+  $form = array();
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#size' => 20,
+  );
+  $form['email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('E-Mail'),
+    '#size' => 20,
+  );
+  $form['age'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Age'),
+    '#size' => 20,
+  );
+  $form['subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject'),
+    '#size' => 20,
+  );
+  $form['message'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Message'),
+  );
+  $form['captcha'] = array(
+    '#type' => 'captcha',
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  return $form;
+}
+
+/**
+ * Validate function for itnernet_reception_page_form.
+ */
+function itnernet_reception_page_form_validate($form, &$form_state) {
+  if (empty($form_state['values']['name'])) {
+    form_set_error('name', t('Name field must not be empty'));
+  }
+
+  if (empty($form_state['values']['email'])) {
+    form_set_error('email', t('E-Mail field must not be empty'));
+  }
+
+  if (!valid_email_address($form_state['values']['email'])) {
+    form_set_error('email', t('The email address appears to be invalid'));
+  }
+
+  if (empty($form_state['values']['age'])) {
+    form_set_error('age', t('Age field must not be empty'));
+  }
+
+  if (!is_numeric($form_state['values']['age']) || intval($form_state['values']['age']) != $form_state['values']['age'] || $form_state['values']['age'] <= 0) {
+    form_set_error('age', t('Age must be a positive integer'));
+  }
+
+  if (empty($form_state['values']['subject'])) {
+    form_set_error('subject', t('Subject field must not be empty'));
+  }
+
+  if (empty($form_state['values']['message'])) {
+    form_set_error('message', t('Message field must not be empty'));
+  }
+}
+
+/**
+ * Submit function for itnernet_reception_page_form.
+ */
+function itnernet_reception_page_form_submit($form, &$form_state) {
+  $to = variable_get('site_mail', '');
+  $from = $form_state['values']['email'];
+  $name = $form_state['values']['name'];
+  $age = $form_state['values']['age'];
+  $subject = $form_state['values']['subject'];
+  $body = $form_state['values']['message'];
+  $params = array(
+    'subject' => 'Subject: ' . $subject,
+    'name' => 'Name: ' . $name,
+    'age' => 'Age: ' . $age,
+    'body' => 'Message: ' . $body,
+  );
+  $message = drupal_mail('Internet Reception', 'Message', $to, language_default(), $params, $from, FALSE);
+
+  $message['subject'] = $subject;
+  $message['body'] = array();
+  $message['body'] = $params;
+
+  $system = drupal_mail_system('Internet Reception', 'Message');
+
+  $message = $system->format($message);
+
+  $message['result'] = $system->mail($message);
+}
