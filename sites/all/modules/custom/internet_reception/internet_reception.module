@@ -51,6 +51,7 @@ function itnernet_reception_page_form($form, $form_state) {
   );
   $form['captcha'] = array(
     '#type' => 'captcha',
+    '#captcha_type' => 'image_captcha/Image',
   );
   $form['submit'] = array(
     '#type' => 'submit',
