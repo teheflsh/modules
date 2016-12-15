@@ -1,4 +1,5 @@
 name = Internet Reception
-description = custom module to send data to the administrator
-version = 7.x-1.x-dev
+description = Custom module to send data to the administrator.
+package = Custom
 core = 7.x
+dependencies[] = captcha:captcha
