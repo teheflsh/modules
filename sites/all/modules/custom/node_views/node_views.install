@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Create table for popup_window.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function node_views_schema() {
+  $schema['node_views'] = array(
+    'description' => 'The base table for node_views.',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The primary identifier for a node_views.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'nodeid' => array(
+        'description' => 'The nid of this node.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'description' => 'The title of this node.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'username' => array(
+        'description' => 'Username watcher of this node.',
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'created' => array(
+        'description' => 'Date and time of viewing this node.',
+        'type' => 'datetime',
+        'not null' => TRUE,
+      ),
+    ),
+    'unique keys' => array(
+      'nid' => array('nid'),
+    ),
+    'primary key' => array('nid'),
+  );
+  return $schema;
+}
