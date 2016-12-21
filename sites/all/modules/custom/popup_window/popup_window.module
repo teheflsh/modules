@@ -8,7 +8,7 @@
 /**
  * Include .inc files.
  */
-require_once drupal_get_path('module', 'popup_window') . "/includes/popup_window.custom.inc";
+require_once drupal_get_path('module', 'popup_window') . '/includes/popup_window.custom.inc';
 
 /**
  * Implements hook_menu().
