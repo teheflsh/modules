@@ -15,11 +15,20 @@ require_once drupal_get_path('module', 'node_views') . '/model/node_views.db.inc
  */
 function node_views_menu() {
   $items = array();
+  $items['admin/config/custom'] = array(
+    'title' => 'Custom',
+    'position' => 'right',
+    'description' => 'Custom module for Node Views.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
   $items['admin/config/custom/node_views'] = array(
     'title' => 'Node Views',
     'description' => 'Custom module for Node Views.',
     'page callback' => 'node_views_config_page_view',
-    'access arguments' => array('administer node_views configuration'),
+    'access arguments' => array('administer'),
     'type' => MENU_NORMAL_ITEM,
     'file' => 'includes/node_views.common.inc',
   );
@@ -28,7 +37,7 @@ function node_views_menu() {
     'description' => 'Custom module for Node Views.',
     'page callback' => 'node_views_config_page_node_view',
     'page arguments' => array(4),
-    'access arguments' => array('administer node_views configuration'),
+    'access arguments' => array('administer'),
     'type' => MENU_SUGGESTED_ITEM,
     'file' => 'includes/node_views.common.inc',
   );

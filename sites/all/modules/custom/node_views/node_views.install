@@ -26,6 +26,7 @@ function node_views_schema() {
       'created' => array(
         'description' => 'Date and time of viewing this node.',
         'type' => 'datetime',
+        'mysql_type' => 'datetime',
         'not null' => TRUE,
       ),
     ),
