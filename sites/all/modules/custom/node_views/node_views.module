@@ -21,7 +21,7 @@ function node_views_menu() {
     'page callback' => 'node_views_config_page_view',
     'access arguments' => array('administer node_views configuration'),
     'type' => MENU_NORMAL_ITEM,
-    'file' => 'includes/node_views.custom.inc',
+    'file' => 'includes/node_views.common.inc',
   );
   $items['admin/config/custom/node_views/%'] = array(
     'title' => 'Node Views',
@@ -30,7 +30,7 @@ function node_views_menu() {
     'page arguments' => array(4),
     'access arguments' => array('administer node_views configuration'),
     'type' => MENU_SUGGESTED_ITEM,
-    'file' => 'includes/node_views.custom.inc',
+    'file' => 'includes/node_views.common.inc',
   );
 
   return $items;
@@ -41,21 +41,27 @@ function node_views_menu() {
  */
 function node_views_node_view($node, $view_mode, $langcode) {
   global $user;
-  if (user_is_anonymous()) {
-    $username = 0;
+  $username = $user->uid;
+  if ($username) {
+    if (flood_is_allowed('note_views_flood', 1, 60, $username)) {
+      $table_name = 'node_views';
+      $row = new stdClass();
+      $row->nid = $node->nid;
+      $row->uid = $username;
+      $row->created = date("Y-m-d H:i:s", time());
+      drupal_write_record($table_name, $row);
+      flood_register_event('note_views_flood', 60, $username);
+    }
   }
   else {
-    $username = $user->name;
-  }
-  if (flood_is_allowed('note_views_flood', 1, 60)) {
-    $nid = db_insert('node_views')
-      ->fields(array(
-        'nodeid' => $node->nid,
-        'title' => $node->title,
-        'username' => $username,
-        'created' => date("Y-m-d H:i:s", time()),
-      ))
-      ->execute();
-    flood_register_event('note_views_flood', 60);
+    if (flood_is_allowed('note_views_flood', 1, 60)) {
+      $table_name = 'node_views';
+      $row = new stdClass();
+      $row->nid = $node->nid;
+      $row->uid = $username;
+      $row->created = date("Y-m-d H:i:s", time());
+      drupal_write_record($table_name, $row);
+      flood_register_event('note_views_flood', 60);
+    }
   }
 }
