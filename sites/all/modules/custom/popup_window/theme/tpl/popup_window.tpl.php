@@ -5,7 +5,7 @@
  * Default template for popup_window.
  */
 ?>
-<div id="overlay"></div>
+<div id="popup-overlay"></div>
 <div id="popup">
   <div class="popup-bar">Status Messages<span class="btn-close">[X]</span></div>
   <div class="popup-content">

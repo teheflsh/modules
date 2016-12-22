@@ -9,7 +9,7 @@
 
       $(document, context).ready(function () {
         if (settings.popup_window.message) {
-          $('#overlay', context).show();
+          $('#popup-overlay', context).show();
           $('#popup', context).show();
           $('#popup', context).css('min-height', settings.popup_window.height + '.px');
           $('#popup', context).css('width', settings.popup_window.width + '.px');
@@ -19,7 +19,7 @@
         }
       });
 
-      $('#overlay', context).click(function () {
+      $('#popup-overlay', context).click(function () {
         close();
       });
 
@@ -28,7 +28,7 @@
       });
 
       function close() {
-        $('#overlay', context).hide();
+        $('#popup-overlay', context).hide();
         $('#popup', context).hide();
         $('body', context).css('overflow', 'auto');
       }
