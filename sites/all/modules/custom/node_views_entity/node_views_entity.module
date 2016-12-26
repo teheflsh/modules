@@ -34,7 +34,7 @@ function node_views_entity_entity_info() {
 }
 
 /**
- * Check access.
+ * Implements hook_entity_access().
  */
 function node_views_entity_access($op, $entity, $account = NULL, $entity_type = 'node_views_entity') {
   return user_access('administer site configuration');
