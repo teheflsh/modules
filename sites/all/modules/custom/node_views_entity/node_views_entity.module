@@ -20,9 +20,9 @@ function node_views_entity_entity_info() {
       'entity class' => 'Entity',
       'controller class' => 'EntityAPIController',
       'base table' => 'node_views_entity',
+      'module' => 'node_views_entity',
       'entity keys' => array(
         'id' => 'rid',
-        'label' => 'nid',
       ),
       'admin ui' => array(
         'path' => 'admin/config/custom/node_views_entity',
@@ -38,6 +38,21 @@ function node_views_entity_entity_info() {
  */
 function node_views_entity_access($op, $entity, $account = NULL, $entity_type = 'node_views_entity') {
   return user_access('administer site configuration');
+}
+
+/**
+ * Implements hook_entity_property_info().
+ */
+function node_views_entity_entity_property_info() {
+  $info = array();
+  $properties = &$info['node_views_entity']['properties'];
+  $properties['created'] = array(
+    'label' => t("Created"),
+    'type' => 'text',
+    'description' => t("Date and time of viewing this node."),
+    'schema field' => 'created',
+  );
+  return $info;
 }
 
 /**
@@ -68,4 +83,18 @@ function node_views_entity_node_view($node, $view_mode, $langcode) {
       flood_register_event('node_views_entity_flood', 60);
     }
   }
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function node_views_entity_views_data_alter(&$data) {
+  $data['node_views_entity']['nid']['relationship']['handler'] = 'views_handler_relationship';
+  $data['node_views_entity']['nid']['relationship']['title'] = 'nid';
+  $data['node_views_entity']['nid']['relationship']['base'] = 'node';
+  $data['node_views_entity']['nid']['relationship']['base field'] = 'nid';
+  $data['node_views_entity']['uid']['relationship']['handler'] = 'views_handler_relationship';
+  $data['node_views_entity']['uid']['relationship']['title'] = 'uid';
+  $data['node_views_entity']['uid']['relationship']['base'] = 'users';
+  $data['node_views_entity']['uid']['relationship']['base field'] = 'uid';
 }

@@ -17,7 +17,6 @@ function node_views_entity_form($form, &$form_state, $node_views_entity, $op = '
     '#default_value' => isset($nodetitle->title) ? $nodetitle->title : '',
     '#required' => TRUE,
   );
-
   $form['uid'] = array(
     '#title' => 'Username',
     '#type' => 'textfield',
