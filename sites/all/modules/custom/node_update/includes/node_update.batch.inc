@@ -26,11 +26,15 @@ function node_update_update($nodes, &$context) {
   $wrapper->save();
 
   $node_wrapper = entity_metadata_wrapper('node', $node);
-  $raw_collection = $node_wrapper->field_rate_date[0]->value();
-  $collection = entity_metadata_wrapper('field_collection_item', $raw_collection);
-  $collection->field_rate = rand(0, 100);
-  $collection->field_date = time();
-  $collection->save();
+  foreach ($node_wrapper->field_rate_date as $field_collection_wrapper) {
+    $raw_collection = $field_collection_wrapper->value();
+    $raw_collection = entity_metadata_wrapper('field_collection_item', $raw_collection);
+    if (date('Ymd', $raw_collection->field_date->value()) != date('Ymd', time())) {
+      $raw_collection->field_rate->set(rand(0, 100));
+      $raw_collection->field_date->set(time());
+    }
+    $raw_collection->save();
+  }
 
   $context['sandbox']['progress']++;
   $context['sandbox']['prev_nid'] = $nid;
