@@ -35,7 +35,6 @@ function keywords_default_rules_configuration() {
  * Implements hook_node_update().
  */
 function keywords_node_update($node) {
-  $message = 'Keywords: ';
   $node_keyword = array();
   $keyword = array();
   $nid = db_select('node', 'n')
@@ -47,6 +46,7 @@ function keywords_node_update($node) {
     ->fields('n', array('keyword'))
     ->execute();
   $node = node_load($nid);
+  $message = 'Node: ' . $node->title . '. Keywords: ';
   $node_wrapper = entity_metadata_wrapper('node', $node);
 
   foreach ($node_wrapper->field_keywords as $field_collection_wrapper) {
