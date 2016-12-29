@@ -35,25 +35,14 @@ function keywords_default_rules_configuration() {
  * Implements hook_node_update().
  */
 function keywords_node_update($node) {
-  $node_keyword = array();
   $keyword = array();
-  $nid = db_select('node', 'n')
-    ->fields('n', array('nid', 'type'))
-    ->condition('n.type', 'keywords_test')
-    ->execute()
-    ->fetchField();
   $kids = db_select('keywords', 'n')
     ->fields('n', array('keyword'))
     ->execute();
-  $node = node_load($nid);
   $message = 'Node: ' . $node->title . '. Keywords: ';
-  $node_wrapper = entity_metadata_wrapper('node', $node);
 
-  foreach ($node_wrapper->field_keywords as $field_collection_wrapper) {
-    $raw_collection = $field_collection_wrapper->value();
-    $raw_collection = entity_metadata_wrapper('field_collection_item', $raw_collection);
-    $node_keyword[] = $raw_collection->field_keyword->value();
-  }
+  $wrapper = entity_metadata_wrapper('node', $node);
+  $node_keyword = preg_split('/[\s,]+/', $wrapper->body->value->value());
 
   foreach ($kids as $kid) {
     $keyword[] = $kid->keyword;
