@@ -35,11 +35,18 @@ function keywords_default_rules_configuration() {
  * Implements hook_node_update().
  */
 function keywords_node_update($node) {
+  $message = '';
   $keyword = array();
-  $kids = db_select('keywords', 'n')
-    ->fields('n', array('keyword'))
-    ->execute();
-  $message = 'Node: ' . $node->title . '. Keywords: ';
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'keywords');
+  $result = $query->execute();
+
+  $records = array();
+
+  foreach ($result['keywords'] as $record) {
+    $records[] = $record->kid;
+  }
+  $kids = entity_load('keywords', $records);
 
   $wrapper = entity_metadata_wrapper('node', $node);
   $node_keyword = preg_split('/[\s,]+/', $wrapper->body->value->value());
@@ -51,8 +58,13 @@ function keywords_node_update($node) {
   $compare_keywords = array_intersect($keyword, $node_keyword);
 
   foreach ($compare_keywords as $compare_keyword) {
-    $message .= $compare_keyword . '/';
+    $message .= $compare_keyword . ' / ';
   }
 
-  watchdog('keywords', $message);
+  if ($compare_keywords) {
+    watchdog('keywords', 'Node: !link. Keywords: %message', array(
+      '!link' => l($node->title, 'node/' . $node->nid),
+      '%message' => $message,
+    ));
+  }
 }

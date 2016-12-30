@@ -35,7 +35,7 @@ function keywords_menu() {
 function keywords_entity_info() {
   return array(
     'keywords' => array(
-      'label' => t('Keywords'),
+      'label' => t('Keyword'),
       'entity class' => 'Entity',
       'controller class' => 'EntityAPIController',
       'base table' => 'keywords',
