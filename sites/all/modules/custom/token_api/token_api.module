@@ -1,0 +1,161 @@
+<?php
+
+/**
+ * @file
+ * Build page for token_api.
+ */
+
+/**
+ * Include .inc files.
+ */
+require_once 'includes/token_api.common.inc';
+require_once 'includes/token_api.form.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function token_api_menu() {
+  $items = array();
+
+  $items['token_api_page'] = array(
+    'title' => 'Registration Successful!',
+    'page callback' => 'token_api_page_content',
+    'access callback' => TRUE,
+    'menu_name' => 'main-menu',
+    'file' => '/includes/token_api.page.inc',
+    'options' => array('attributes' => array('class' => array('test-class'))),
+  );
+  $items['admin/config/custom'] = array(
+    'title' => 'Custom',
+    'position' => 'right',
+    'description' => 'Custom module for Token API.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/custom/token_api'] = array(
+    'title' => 'Token API Message',
+    'description' => 'Custom module for Token API.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('token_api_config_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'includes/token_api.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function token_api_entity_info() {
+  return array(
+    'token_api' => array(
+      'label' => t('Token API'),
+      'entity class' => 'Entity',
+      'controller class' => 'EntityAPIController',
+      'base table' => 'token_api',
+      'module' => 'token_api',
+      'entity keys' => array(
+        'id' => 'tid',
+        'label' => 'discount_code',
+      ),
+      'admin ui' => array(
+        'path' => 'admin/config/custom/token_api',
+      ),
+      'access callback' => 'token_api_access',
+      'module' => 'token_api',
+    ),
+  );
+}
+
+/**
+ * Implements hook_entity_access().
+ */
+function token_api_access($op, $entity, $account = NULL, $entity_type = 'token_api') {
+  return user_access('administer site configuration');
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function token_api_token_info() {
+  $type = array(
+    'name' => t('User'),
+    'description' => t('User data.'),
+  );
+
+  $global['user-name'] = array(
+    'name' => t('User name'),
+    'description' => t('Name current user'),
+  );
+
+  $global['user-token'] = array(
+    'name' => t('User token'),
+    'description' => t('Token for this user'),
+  );
+
+  return array(
+    'types' => array('user' => $type),
+    'tokens' => array('user' => $global),
+  );
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function token_api_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  if ($type == 'user') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'user-name':
+          $replacements[$original] = token_api_get_user_name();
+          break;
+
+        case 'user-token':
+          $replacements[$original] = token_api_get_user_token();
+          break;
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Get users count.
+ */
+function token_api_get_user_name() {
+  global $user;
+  return $user->name;
+}
+
+/**
+ * Get users count.
+ */
+function token_api_get_user_token() {
+  token_api_record();
+
+  global $user;
+  $token = '';
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'token_api');
+  $result = $query->execute();
+
+  $records = array();
+
+  foreach ($result['token_api'] as $record) {
+    $records[] = $record->tid;
+  }
+  $tids = entity_load('token_api', $records);
+
+  foreach ($tids as $tid) {
+    if ($tid->uid == $user->uid) {
+      $token = $tid->discount_code;
+    }
+  }
+
+  return $token;
+}

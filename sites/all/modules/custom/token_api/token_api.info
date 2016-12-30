@@ -1,0 +1,6 @@
+name = Token API
+description = Custom module for token api.
+package = Custom
+core = 7.x
+dependencies[] = entity
+dependencies[] = token

@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Create table for token_api.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function token_api_schema() {
+  $schema['token_api'] = array(
+    'description' => 'The base table for token_api.',
+    'fields' => array(
+      'tid' => array(
+        'description' => 'Token ID',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'The uid of user.',
+        'type' => 'int',
+        'length' => 10,
+      ),
+      'discount_code' => array(
+        'description' => 'The discount code for this user.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('tid'),
+  );
+  return $schema;
+}
