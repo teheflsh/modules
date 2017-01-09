@@ -61,3 +61,31 @@ function user_discount_generate_token() {
 
   return $token;
 }
+
+/**
+ * Get users count.
+ */
+function user_discount_get_user_token() {
+  user_discount_record();
+
+  global $user;
+  $token = '';
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'user_discount');
+  $result = $query->execute();
+
+  $records = array();
+
+  foreach ($result['user_discount'] as $record) {
+    $records[] = $record->tid;
+  }
+  $tids = entity_load('user_discount', $records);
+
+  foreach ($tids as $tid) {
+    if ($tid->uid == $user->uid) {
+      $token = $tid->discount_code;
+    }
+  }
+
+  return $token;
+}
