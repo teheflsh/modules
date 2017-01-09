@@ -18,7 +18,7 @@ function token_api_form_alter(&$form, &$form_state, $form_id) {
  * Custom function Register Submit for token_api.
  */
 function token_api_user_register_submit($form, &$form_state) {
-  $form_state['redirect'] = 'token_api_page';
+  $form_state['redirect'] = 'successful';
 }
 
 /**

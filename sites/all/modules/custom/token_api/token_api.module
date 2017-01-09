@@ -17,10 +17,10 @@ require_once 'includes/token_api.form.inc';
 function token_api_menu() {
   $items = array();
 
-  $items['token_api_page'] = array(
+  $items['successful'] = array(
     'title' => 'Registration Successful!',
-    'page callback' => 'token_api_page_content',
-    'access callback' => TRUE,
+    'page callback' => 'successful_content',
+    'access callback' => 'user_is_logged_in',
     'menu_name' => 'main-menu',
     'file' => '/includes/token_api.page.inc',
     'options' => array('attributes' => array('class' => array('test-class'))),
@@ -98,8 +98,8 @@ function token_api_token_info() {
   );
 
   return array(
-    'types' => array('user' => $type),
-    'tokens' => array('user' => $global),
+    'types' => array($type),
+    'tokens' => array($global),
   );
 }
 
@@ -107,6 +107,8 @@ function token_api_token_info() {
  * Implements hook_tokens().
  */
 function token_api_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+
   if ($type == 'user') {
     foreach ($tokens as $name => $original) {
       switch ($name) {
