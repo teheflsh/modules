@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Build admin form for token_api.
+ * Build admin form for user_discount.
  */
 
  /**
-  * Token API config form.
+  * User Discount config form.
   */
-function token_api_config_form($form, &$form_state) {
+function user_discount_config_form($form, &$form_state) {
   $form = array();
 
-  $form['token_api_message'] = array(
+  $form['user_discount_message'] = array(
     '#type' => 'textarea',
-    '#title' => t('Token API Message'),
-    '#default_value' => variable_get('token_api_message', 'Hello!'),
+    '#title' => t('User Discount Message'),
+    '#default_value' => variable_get('user_discount_message', 'Hello!'),
     '#required' => TRUE,
   );
   $form['token_tree'] = array(

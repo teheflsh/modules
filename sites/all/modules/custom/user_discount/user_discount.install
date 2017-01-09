@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Create table for token_api.
+ * Create table for user_discount.
  */
 
 /**
  * Implements hook_schema().
  */
-function token_api_schema() {
-  $schema['token_api'] = array(
-    'description' => 'The base table for token_api.',
+function user_discount_schema() {
+  $schema['user_discount'] = array(
+    'description' => 'The base table for user_discount.',
     'fields' => array(
       'tid' => array(
         'description' => 'Token ID',

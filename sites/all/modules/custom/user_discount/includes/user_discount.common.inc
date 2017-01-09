@@ -2,44 +2,44 @@
 
 /**
  * @file
- * Create custom function for token_api.
+ * Create custom function for user_discount.
  */
 
  /**
-  * Custom function for add new record fo token_api table.
+  * Custom function for add new record fo user_discount table.
   */
-function token_api_record() {
+function user_discount_record() {
   global $user;
 
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'token_api');
+  $query->entityCondition('entity_type', 'user_discount');
   $result = $query->execute();
 
-  foreach ($result['token_api'] as $record) {
+  foreach ($result['user_discount'] as $record) {
     $records[] = $record->tid;
   }
 
-  $tids = entity_load('token_api', $records);
+  $tids = entity_load('user_discount', $records);
 
   foreach ($tids as $tid) {
     $uids[] = $tid->uid;
   }
 
-  /* Check user existence in token_api */
+  /* Check user existence in user_discount */
   $token = '';
   if (in_array($user->uid, $uids) == FALSE) {
-    /* Record discount_codes in token_api */
+    /* Record discount_codes in user_discount */
     foreach ($tids as $tid) {
       $discount_codes[] = $tid->discount_code;
     }
 
-    $temp = token_api_generate_token();
+    $temp = user_discount_generate_token();
 
     if (in_array($temp, $discount_codes) == FALSE) {
       $token = $temp;
     }
 
-    $table_name = 'token_api';
+    $table_name = 'user_discount';
     $row = new stdClass();
     $row->uid = $user->uid;
     $row->discount_code = $token;
@@ -50,7 +50,7 @@ function token_api_record() {
 /**
  * Custom function for generate token.
  */
-function token_api_generate_token() {
+function user_discount_generate_token() {
   $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   $charactersLength = strlen($characters);
   $token = '';

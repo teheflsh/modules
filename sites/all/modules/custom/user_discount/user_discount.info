@@ -1,5 +1,5 @@
-name = Token API
-description = Custom module for token api.
+name = User Discount
+description = Custom module for user discount.
 package = Custom
 core = 7.x
 dependencies[] = entity
