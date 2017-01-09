@@ -8,8 +8,12 @@
 /**
  * Token API page content.
  */
-function token_api_page_content() {
-  $message = variable_get('token_api_message', 'Hello!');
-  $message = token_replace($message);
+function successful_content() {
+  global $user;
+  $message = '';
+  if ($user->uid != 0) {
+    $message = variable_get('token_api_message', 'Hello!');
+    $message = token_replace($message);
+  }
   return $message;
 }
