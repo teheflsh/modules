@@ -12,14 +12,14 @@ function user_discount_record() {
   global $user;
 
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'user_discount');
+  $query->entityCondition('entity_type', 'user_discount_list');
   $result = $query->execute();
 
-  foreach ($result['user_discount'] as $record) {
+  foreach ($result['user_discount_list'] as $record) {
     $records[] = $record->tid;
   }
 
-  $tids = entity_load('user_discount', $records);
+  $tids = entity_load('user_discount_list', $records);
 
   foreach ($tids as $tid) {
     $uids[] = $tid->uid;
@@ -39,7 +39,7 @@ function user_discount_record() {
       $token = $temp;
     }
 
-    $table_name = 'user_discount';
+    $table_name = 'user_discount_list';
     $row = new stdClass();
     $row->uid = $user->uid;
     $row->discount_code = $token;
@@ -71,15 +71,15 @@ function user_discount_get_user_token() {
   global $user;
   $token = '';
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'user_discount');
+  $query->entityCondition('entity_type', 'user_discount_list');
   $result = $query->execute();
 
   $records = array();
 
-  foreach ($result['user_discount'] as $record) {
+  foreach ($result['user_discount_list'] as $record) {
     $records[] = $record->tid;
   }
-  $tids = entity_load('user_discount', $records);
+  $tids = entity_load('user_discount_list', $records);
 
   foreach ($tids as $tid) {
     if ($tid->uid == $user->uid) {

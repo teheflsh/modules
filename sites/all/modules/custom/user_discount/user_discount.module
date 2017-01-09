@@ -51,7 +51,7 @@ function user_discount_menu() {
  */
 function user_discount_entity_info() {
   return array(
-    'user_discount' => array(
+    'user_discount_list' => array(
       'label' => t('User Discount'),
       'entity class' => 'Entity',
       'controller class' => 'EntityAPIController',
@@ -62,7 +62,7 @@ function user_discount_entity_info() {
         'label' => 'discount_code',
       ),
       'admin ui' => array(
-        'path' => 'admin/config/custom/user_discount',
+        'path' => 'admin/config/custom/user_discount_list',
       ),
       'access callback' => 'user_discount_access',
       'module' => 'user_discount',
@@ -73,7 +73,7 @@ function user_discount_entity_info() {
 /**
  * Implements hook_entity_access().
  */
-function user_discount_access($op, $entity, $account = NULL, $entity_type = 'user_discount') {
+function user_discount_access($op, $entity, $account = NULL, $entity_type = 'user_discount_list') {
   return user_access('administer site configuration');
 }
 
