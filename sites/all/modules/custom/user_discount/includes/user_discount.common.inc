@@ -89,3 +89,10 @@ function user_discount_get_user_token() {
 
   return $token;
 }
+
+/**
+ * Load multiple user_discount based on certain conditions.
+ */
+function user_discount_load_multiple($user_discount = array(), $reset = FALSE) {
+  return entity_load('user_discount_list', $user_discount, $reset);
+}
