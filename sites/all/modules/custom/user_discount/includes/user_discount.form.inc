@@ -24,16 +24,19 @@ function user_discount_user_register_submit($form, &$form_state) {
 /**
  * Build node_views_entity form.
  */
-function user_discount_form($form, &$form_state, $user_discount, $op = 'edit') {
+function user_discount_list_form($form, &$form_state, $user_discount, $op = 'edit') {
+  global $user;
   $form['uid'] = array(
     '#title' => 'UID',
     '#type' => 'textfield',
     '#required' => TRUE,
+    '#default_value' => isset($user->uid) ? $user->uid : '',
   );
   $form['discount_code'] = array(
     '#title' => 'Discount Code',
     '#type' => 'textfield',
     '#required' => TRUE,
+    '#default_value' => isset($user_discount->discount_code) ? $user_discount->discount_code : '',
   );
 
   $form['actions'] = array(
@@ -54,5 +57,5 @@ function user_discount_form($form, &$form_state, $user_discount, $op = 'edit') {
 function user_discount_form_submit(&$form, &$form_state) {
   $user_discount = entity_ui_form_submit_build_entity($form, $form_state);
   $user_discount->save();
-  $form_state['redirect'] = 'admin/config/custom/user_discount';
+  $form_state['redirect'] = 'admin/config/custom/user_discount_list';
 }

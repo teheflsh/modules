@@ -11,6 +11,10 @@
 require_once 'includes/user_discount.common.inc';
 require_once 'includes/user_discount.form.inc';
 
+// Admin uri links.
+define('ADMIN_CONTENT_USER_DISCOUNT_MANAGE_URI', 'admin/config/custom/user_discount_list/manage/');
+define('ADMIN_CONTENT_USER_DISCOUNT_URI', 'admin/config/custom/user_discount_list');
+
 /**
  * Implements hook_menu().
  */
@@ -53,6 +57,7 @@ function user_discount_entity_info() {
   return array(
     'user_discount_list' => array(
       'label' => t('User Discount'),
+      'label callback' => 'user_discount_list_label_callback',
       'entity class' => 'Entity',
       'controller class' => 'EntityAPIController',
       'base table' => 'user_discount',
@@ -63,6 +68,7 @@ function user_discount_entity_info() {
       ),
       'admin ui' => array(
         'path' => 'admin/config/custom/user_discount_list',
+        'controller class' => 'UserDiscountUIController',
       ),
       'access callback' => 'user_discount_access',
       'module' => 'user_discount',
@@ -111,4 +117,93 @@ function user_discount_tokens($type, $tokens, array $data = array(), array $opti
   }
 
   return $replacements;
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function user_discount_views_data_alter(&$data) {
+  $data['user_discount']['uid']['relationship']['handler'] = 'views_handler_relationship';
+  $data['user_discount']['uid']['relationship']['title'] = 'uid';
+  $data['user_discount']['uid']['relationship']['base'] = 'users';
+  $data['user_discount']['uid']['relationship']['base field'] = 'uid';
+}
+
+/**
+ * Implements hook_label_callback().
+ */
+function user_discount_list_label_callback($discount_code, $type) {
+  $username = user_load($discount_code->uid);
+  return isset($username->name) ? $username->name : '';
+}
+
+/**
+ * Load multiple user_discount based on certain conditions.
+ */
+function user_discount_load_multiple($user_discount = array(), $reset = FALSE) {
+  return entity_load('user_discount_list', $user_discount, $reset);
+}
+
+/**
+ * Custom controller for the administrator UI.
+ */
+class UserDiscountUIController extends EntityDefaultUIController {
+
+  /**
+   * Override the menu hook for default ui controller.
+   */
+  public function hook_menu() {
+    $items = parent::hook_menu();
+    $items[$this->path]['title'] = t('User Discount');
+    $items[$this->path]['description'] = t('Manage user discount, including fields.');
+    $items[$this->path]['access callback'] = 'user_discount_access';
+    $items[$this->path]['type'] = MENU_LOCAL_TASK;
+    return $items;
+  }
+
+  /**
+   * Admin form for searching and doing bulk operations.
+   */
+  public function overviewForm($form, &$form_state) {
+    $header = array(
+      'uid' => array('data' => t('Username'), 'field' => 'uid'),
+      'discount_code' => array('data' => t('Discount code'), 'field' => 'discount_code'),
+      'operations' => array('data' => t('Operations'), 'field' => 'operations'),
+    );
+
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'user_discount_list');
+
+    $result = $query->execute();
+    $user_discount_results = !empty($result['user_discount_list']) ? $result['user_discount_list'] : array();
+    $user_discount_array = !empty($user_discount_results) ? user_discount_load_multiple(array_keys($user_discount_results)) : array();
+    foreach ($user_discount_array as $tid => $user_discount) {
+      $username = user_load($user_discount->uid);
+      $options[$tid] = array(
+        'uid' => l($username->name, 'user/' . $user_discount->uid),
+        'discount_code' => $user_discount->discount_code,
+        'operations' =>
+        l(t('Edit'), ADMIN_CONTENT_USER_DISCOUNT_MANAGE_URI . $tid) . ' ' .
+        l(t('Delete'), ADMIN_CONTENT_USER_DISCOUNT_MANAGE_URI . $tid . '/delete', array(
+          'attributes' => array(
+            'class' => array('user-discount-delete-' . $user_discount->tid),
+          ),
+          'query' => array(
+            'destination' => ADMIN_CONTENT_USER_DISCOUNT_URI,
+          ),
+        )),
+      );
+    }
+
+    $form['entities'] = array(
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#options' => $options,
+      '#attributes' => array('class' => array('entity-sort-table')),
+      '#empty' => t('There are no user discount.'),
+    );
+
+    return $form;
+  }
+
 }
