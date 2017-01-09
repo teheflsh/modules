@@ -3,3 +3,4 @@ description = Custom module to send data to the administrator.
 package = Custom
 core = 7.x
 dependencies[] = captcha:captcha
+files[] = internet_reception.test
